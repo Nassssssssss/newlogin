@@ -22,8 +22,12 @@
                 {{else}}
                 <article class="markdown-body">
                     <h1>{{topic.title}}</h1>
-                    <a href="/topic/detail/edit">编辑</a>
-                    <a href="/topic/detail/delete" id="delete_topic">删除</a>
+
+                    {{if topic.userId===sessionUserId}} 
+                    <a href="/topic/{{topic.id}}/edit">编辑</a>
+                    <a href="/topic/{{topic.id}}/delete" id="delete_topic">删除</a>
+                    {{/if}}
+                    
                     <hr> {{topic.content}}
                 </article>
                 <div class="panel panel-default">
@@ -32,7 +36,8 @@
                         <span>24 minutes ago</span>
                         <span class="action">
                              <a href=""><i class="glyphicon glyphicon-thumbs-up pull-right"></i></a>
-                            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
+                            <a href="">
+                                <i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
                             <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
                         </span>
                     </div>
@@ -58,6 +63,19 @@
     <script src="/node_modules/bootstrap/dist/js/bootstrap.js"></script>
     <script>
         // 点击删除
+        $('#delete_topic').on('click',function(){
+            if(!window.confirm('确定删除嘛?')){
+                return
+            }
+            var url='/topic/'+ '{{topic.id}}'+'/delete'
+           $.get(url,function(data){
+               if(data.code==200){
+                window.location.href='/'
+               }
+           })
+            return false
+        })
+            
     </script>
 </body>
 

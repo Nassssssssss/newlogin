@@ -27,3 +27,21 @@ exports.findTopicById=(topicID,callback)=>{
         callback(null,data) 
     });
 }
+exports.updateTopicByID=(topicID,body,callback)=>{
+    const sqlstr="update `topics` set `title`=?,`content`=?  where `id`=?"
+    db.query(sqlstr,[body.title,body.content,topicID],(err, data) => {
+        if (err) {
+            return callback(err)
+        } ;
+        callback(null,data) 
+    });
+}
+exports.delete=(topicID,callback)=>{
+    const sqlstr="delete from `topic` where `id`=?"
+    db.query(sqlstr,topicID,(err, data) => {
+        if (err) {
+            return callback(err)
+        } ;
+        callback(null,data) 
+    });
+}

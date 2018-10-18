@@ -49,7 +49,72 @@ exports.showDetail=(req,res)=>{
             })
         }
         res.render('topic/show.html',{
+            topic:data[0],
+            sessionUserId:req.session.user.id
+        })
+    })
+}
+exports.showEdit=(req,res)=>{
+    //获取req中的动态ID
+    const topicID=req.params.topicID;
+    // const body=req.body
+    m_topic.findTopicById(topicID,(err,data)=>{
+        if(err){
+            return res.send({
+                code:500,
+                message:'服务器错误'
+            })
+        }
+        res.render('topic/edit.html',{
             topic:data[0]
         })
     })
+    // 修改数据
+    // m_topic.updateTopicByID(topicID,body,(err,data)=>{
+    //     if(err){
+    //        return res.send({
+    //            code:500,
+    //            message:'服务器错误'
+    //        })
+    //     }
+    //     res.send({
+    //         code:200,
+    //         message:'修改成功'
+    //     })
+    // })
+}
+exports.deleteTopic=(req,res)=>{
+    const topicID=req.params.topicID;
+    m_topic.delete(topicID,(err,data)=>{
+        if(err){
+            return res.send({
+                code:500,
+                message:err.message
+            })
+        }
+        // res.redirect('/')
+        res.send({
+            code:200,
+            message:'删除成功'
+        })
+    })
+}
+// 编辑页面的提交请求
+exports.handleEditTopic=(req,res)=>{
+    const body=req.body;
+    const topicID=req.params.topicID;
+    m_topic.updateTopicByID(topicID,body,(err,data)=>{
+            if(err){
+               return res.send({
+                   code:500,
+                   err:'服务器错误'
+               })
+            }
+            res.send({
+                code:200,
+                message:'修改成功'
+            })
+        })
+        
+    
 }

@@ -1,9 +1,11 @@
-const showSignin =(req,res)=>{
+const m_user=require('../modle/m_user')
+
+exports.showSignin =(req,res)=>{
     res.render('signin.html')
 }
-const handleSignin=(req,res)=>{
+exports.handleSignin=(req,res)=>{
     const body=req.body
-    const m_user=require('../modle/m_user')
+    console.log(body.email)
     m_user.checkEmail(body.email,function(err,data){
         if(err){
             return res.send({
@@ -24,10 +26,10 @@ const handleSignin=(req,res)=>{
             })
         }
         req.session.user=data[0];
-        console.log(req.session.user.nickname)
+        
         if(body.password==data[0].password){
             return res.send({
-                code:200,
+                code:3,
                 message:'登录成功'
             })
         }
@@ -35,10 +37,59 @@ const handleSignin=(req,res)=>{
         // res.redirect('/')
     });
 }
-const handleSignout=(req,res)=>{
+exports.handleSignout=(req,res)=>{
     delete req.session.user
     res.redirect('/signin')
 }
-module.exports.showSignin=showSignin
-module.exports.handleSignin=handleSignin
-module.exports.handleSignout=handleSignout
+//渲染注册页面
+exports.showSignup=(req,res)=>{
+    res.render('signup.html')
+}
+exports.handleSignup=(req,res)=>{
+    const body=req.body
+    console.log(body.email)
+    m_user.checkEmail(body.email,(err,data)=>{
+        if(err){
+            return res.send({
+                code:500,
+                message:'服务器错误'
+            })
+        }
+        if(data[0]){
+            return res.send({
+                code:10,
+                message:'账号已被注册'
+            })
+        }
+        m_user.checkNickName(body.nickname,(err,data)=>{
+            if(err){
+                return res.send({
+                    code:11,
+                    message:'服务器错误'
+                })
+            }
+            if(data[0]){
+                return res.send({
+                    code:12,
+                    message:'昵称已被注册'
+                })
+            }
+            m_user.addUser(body,(err,data)=>{
+                if(err){
+                    return res.send({
+                        code:13,
+                        message:'服务器错误'
+                    })
+                }
+                res.send({
+                    code:3,
+                    message:'注册成功'
+                })
+            })
+        })
+        
+    })
+    
+}
+
+
